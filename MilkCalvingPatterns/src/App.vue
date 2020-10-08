@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <div class="navbar navbar-light bg-light fixed-top">
-            <h3>Milk Projections</h3>
+            <h3>Milk Projections App</h3>
         </div>
         <Home/>
     </div>
