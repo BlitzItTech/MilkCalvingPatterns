@@ -2,7 +2,7 @@
     <div>
 
         <div class="mx-1 input-group">
-            <button class="btn btn-secondary form-control input-group-text" @click="toggleCollapse">{{ item.patternName }}</button>
+            <button class="btn btn-secondary form-control input-group-text dropdown-toggle" @click="toggleCollapse">{{ item.patternName }}</button>
             <button class="btn btn-danger" @click="remove"><span class="oi oi-trash" /></button>
         </div>
                 
@@ -139,7 +139,9 @@
         data: function () {
             return {
                 disabledDates: {
-                    days: [6, 0, 2, 3, 4, 5]
+                    days: [6, 0, 2, 3, 4, 5],
+                    to: new Date('1/6/2020'),
+                    from: new Date('1/4/2021')
                 },
                 collapseClass: 'collapse',
             };

@@ -20,7 +20,7 @@
 
         <div class="form-group">
             <div class="row">
-                <a class="btn btn-primary mx-3" data-toggle="collapse" data-target="#calvingPatterns">Calving Patterns</a>
+                <a class="btn btn-primary mx-3 dropdown-toggle" data-toggle="collapse" data-target="#calvingPatterns">Calving Patterns</a>
                 <a class="nav-link" @click="addPattern">Add</a>
             </div>
             

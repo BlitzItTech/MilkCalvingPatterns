@@ -15,6 +15,14 @@ Vue.config.productionTip = true;
 
 Vue.prototype.moment = moment;
 
+Vue.filter('toShortDate', function (value) {
+    if (typeof value !== 'string') {
+        return value;
+    }
+
+    return moment(value).format('DD MMM YYYY');
+})
+
 Array.prototype.orderBy = function (prop, asc = true) {
     return this.sort(function (a, b) {
         if (a[prop] > b[prop]) {

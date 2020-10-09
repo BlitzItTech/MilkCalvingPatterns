@@ -20,28 +20,28 @@
                     </div>
                 </div>
 
+                <div class="form-group form-check">
+                    <input id="ch1" class="form-check-input" type="checkbox" v-model="showTwoYears" @change="refresh" />
+                    <label for="ch1" class="form-check-label">Show Two Years</label>
+                </div>
+
                 <div>
                     <Item-Selector-Manual title="Line Property" @change="refreshYearlyHerdData" v-model="propToShow" :items="['Litres', 'Average', 'Cows In Milk']"/>
                 </div>
-
-                <!--<div>
-                    <input type="checkbox" v-model="isGraphOverlay" @change="refreshYearlyHerdData" />
-                    <label class="ml-3">Overlay</label>
-                </div>
-
-                <div>
-                    <input type="checkbox" v-model="isIndividualPatterns" @change="refreshYearlyHerdData" />
-                    <label class="ml-3">Calving Pattern Lines</label>
-                </div>-->
 
                 <hr />
                 <Herd v-for="(herd, index) in herds" :key="index" v-model="herd.herd" @removeHerd="removeHerd(index)">
                 </Herd>
             </div>
-            <div class="col-sm-6 col-md-7 col-lg-8 col-xl-9 offset-sm-6 offset-md-5 offset-lg-4 offset-xl-3 fixed-top">
-                Right Column
+            <div class="col-sm-6 col-md-7 col-lg-8 col-xl-9 offset-sm-6 offset-md-5 offset-lg-4 offset-xl-3 fixed-top">                
                 <Milk-Chart v-if="showGraph" :data="chartData" :options="chartOptions"/>
-            </div>
+                <!--<div v-for="(herd, index) in chartHerdsData" :key="index" class="flex-col">
+                    HERD: {{ herd.herdName }}
+                    <div v-for="(data, index) in herd.weekData" :key="index">
+                        Date: {{ data.dateOn | toShortDate }} Herd: {{ data.miniHerdNumber }} Cows: {{ data.cows }} Litres: {{ Math.round(data.litres) }}  Status: {{ data.status }}
+                    </div>
+                </div>-->                
+            </div>            
         </div>
     </div>    
 </template>
@@ -114,9 +114,12 @@
                 showProp: 'Litres',
                 showGraph: true,    
                 disabledDates: {
-                    days: [6,0,2,3,4,5]
+                    days: [6, 0, 2, 3, 4, 5],
+                    to: new Date('1/6/2020'),
+                    from: new Date('1/4/2021')
                 },
                 jsonData: null,
+                showTwoYears: false,
             }            
         },
         created() {
@@ -347,79 +350,79 @@
 
                 return dSet;
             },
-            refreshHerdData() {
-                var dataSets = [];
-                var labels = [];
-                //var sDate = this.dayOne;
-                var sDate = new Date();
+            //refreshHerdData() {
+            //    var dataSets = [];
+            //    var labels = [];
+            //    //var sDate = this.dayOne;
+            //    var sDate = new Date();
 
-                for (var ii = 0; ii < this.chartHerdsData.length; ii++) {
-                    var hD = this.chartHerdsData[ii];
-                    var d = this.getMinDate(hD);
-                    if (d < sDate || ii == 0) {
-                        sDate = d;
-                    }
-                }
+            //    for (var ii = 0; ii < this.chartHerdsData.length; ii++) {
+            //        var hD = this.chartHerdsData[ii];
+            //        var d = this.getMinDate(hD);
+            //        if (d < sDate || ii == 0) {
+            //            sDate = d;
+            //        }
+            //    }
                
-                //herdData = { herdName: String, weekData: [] }
-                for (var vv = 0; vv < this.chartHerdsData.length; vv++) {
-                    var herdData = this.chartHerdsData[vv];                                      
-                    var eDate = this.getMaxDate(herdData);
+            //    //herdData = { herdName: String, weekData: [] }
+            //    for (var vv = 0; vv < this.chartHerdsData.length; vv++) {
+            //        var herdData = this.chartHerdsData[vv];                                      
+            //        var eDate = this.getMaxDate(herdData);
 
-                    if (this.isGraphOverlay == true) {
-                        if (vv == 0) {
-                            var r = 1;
-                            do {
-                                labels.push(r);
-                                r += 1;
-                            } while (r <= 52);
-                        }
+            //        if (this.isGraphOverlay == true) {
+            //            if (vv == 0) {
+            //                var r = 1;
+            //                do {
+            //                    labels.push(r);
+            //                    r += 1;
+            //                } while (r <= 52);
+            //            }
                         
-                        if (this.isIndividualPatterns == true) {
-                            var res = this.getWeekDataByPattern(herdData);
-                            for (var i = 0; i < res.length; i++) {
-                                dataSets.push(res[i]);
-                            }
-                        }
-                        else {                           
-                            var res = this.getWeekDataByHerd(herdData);
-                            dataSets.push(res);                                                                     
-                        }                        
-                    }
-                    else {  
-                        if (vv == 0) {
-                            var cDate = sDate;
-                            do {
-                                labels.push(moment(cDate).format('DD MMM YYYY'));
-                                cDate = cDate.addDays(7);
-                            } while (cDate <= eDate);
-                        }
+            //            if (this.isIndividualPatterns == true) {
+            //                var res = this.getWeekDataByPattern(herdData);
+            //                for (var i = 0; i < res.length; i++) {
+            //                    dataSets.push(res[i]);
+            //                }
+            //            }
+            //            else {                           
+            //                var res = this.getWeekDataByHerd(herdData);
+            //                dataSets.push(res);                                                                     
+            //            }                        
+            //        }
+            //        else {  
+            //            if (vv == 0) {
+            //                var cDate = sDate;
+            //                do {
+            //                    labels.push(moment(cDate).format('DD MMM YYYY'));
+            //                    cDate = cDate.addDays(7);
+            //                } while (cDate <= eDate);
+            //            }
                         
-                        if (this.isIndividualPatterns == true) {
-                            var res = this.getWeekDataByPatternFrom(herdData, sDate, eDate);
-                            for (var i = 0; i < res.length; i++) {
-                                dataSets.push(res[i]);
-                            }
-                        }
-                        else {                           
-                            var res = this.getWeekDataByHerdFrom(herdData, sDate, eDate);
-                            dataSets.push(res);
-                            //dataSets.push({
-                            //    label: herdData.herdName,
-                            //    backgroundColor: this.getNewColor(),
-                            //    data: this.getHerdLineValues(herdData.patternData),
-                            //})                                                    
-                        }                        
-                    }
-                }    
+            //            if (this.isIndividualPatterns == true) {
+            //                var res = this.getWeekDataByPatternFrom(herdData, sDate, eDate);
+            //                for (var i = 0; i < res.length; i++) {
+            //                    dataSets.push(res[i]);
+            //                }
+            //            }
+            //            else {                           
+            //                var res = this.getWeekDataByHerdFrom(herdData, sDate, eDate);
+            //                dataSets.push(res);
+            //                //dataSets.push({
+            //                //    label: herdData.herdName,
+            //                //    backgroundColor: this.getNewColor(),
+            //                //    data: this.getHerdLineValues(herdData.patternData),
+            //                //})                                                    
+            //            }                        
+            //        }
+            //    }    
 
-                this.chartData = {
-                    labels: labels.length > 0 ? labels : null,
-                    datasets: dataSets,
-                };
+            //    this.chartData = {
+            //        labels: labels.length > 0 ? labels : null,
+            //        datasets: dataSets,
+            //    };
 
-                //this.chartData = data;                
-            },         
+            //    //this.chartData = data;                
+            //},         
             refreshYearlyHerdData() {
                 var dataSets = [];
                 var labels = [];
@@ -428,7 +431,8 @@
                     var herdData = this.chartHerdsData[i];
 
                     var sDate = this.dayOne;
-                    var eDate = sDate.addDays(52 * 7);
+                    var dMultiple = this.showTwoYears ? 104 : 52;
+                    var eDate = sDate.addDays(dMultiple * 7);
                     var dSet = {
                         label: herdData.herdName,
                         backgroundColor: herdData.color, //this.getNewColor(),
@@ -560,8 +564,6 @@
                 }
                 return str;
             },
-
-
             exportCSVFile(headers, items, fileTitle) {
 
                 if (headers) {
@@ -606,83 +608,83 @@
                
                 this.chartHerdsData = herdObjects;
             },            
-            createHerdData(herd) {                
-                var patternData = [];                
-                var carryOvers = 0;                
-                var weekData = [];                
-                var sDate = new Date();
+            //createHerdData(herd) {                
+            //    var patternData = [];                
+            //    var carryOvers = 0;                
+            //    var weekData = [];                
+            //    var sDate = new Date();
 
-                herd.calvingPatterns.orderBy('dateFrom');
+            //    herd.calvingPatterns.orderBy('dateFrom');
 
-                 //week data = { dateOn, patternName, miniHerdNumber, cows, status, litres }
+            //     //week data = { dateOn, patternName, miniHerdNumber, cows, status, litres }
 
-                for (var i = 0; i < herd.calvingPatterns.length; i++) {                    
-                    var pattern = herd.calvingPatterns[i];
-                    var dryDate = this.getDryOffCommenceDate(pattern);
-                    var staleDate = this.getStaleOnDate(pattern);
-                    var nextCalvingPatternDate = staleDate;
-                    if (i + 1 < herd.calvingPatterns.length) {
-                        nextCalvingPatternDate = this.getDryOffCommenceDate(herd.calvingPatterns[(i + 1)]);
-                    }
+            //    for (var i = 0; i < herd.calvingPatterns.length; i++) {                    
+            //        var pattern = herd.calvingPatterns[i];
+            //        var dryDate = this.getDryOffCommenceDate(pattern);
+            //        var staleDate = this.getStaleOnDate(pattern);
+            //        var nextCalvingPatternDate = staleDate;
+            //        if (i + 1 < herd.calvingPatterns.length) {
+            //            nextCalvingPatternDate = this.getDryOffCommenceDate(herd.calvingPatterns[(i + 1)]);
+            //        }
 
-                    if (i == 0) {
-                        sDate = dryDate;
-                    }
+            //        if (i == 0) {
+            //            sDate = dryDate;
+            //        }
                     
-                    pattern.herdSize = herd.herdSize * (pattern.herdRatio / 100);   
+            //        pattern.herdSize = herd.herdSize * (pattern.herdRatio / 100);   
 
-                    var startDate = sDate;
-                    do {
-                        if (startDate < dryDate) {
-                            weekData.push({
-                                dateOn: startDate,
-                                patternName: pattern.patternName,
-                                miniHerdNumber: 0,
-                                cows: pattern.herdSize,
-                                status: 'stale',
-                                litres: pattern.herdSize * pattern.staleAvg,
-                            });
-                        }                        
-                        startDate = startDate.addDays(7);
-                    } while (startDate < dryDate);
+            //        var startDate = sDate;
+            //        do {
+            //            if (startDate < dryDate) {
+            //                weekData.push({
+            //                    dateOn: startDate,
+            //                    patternName: pattern.patternName,
+            //                    miniHerdNumber: 0,
+            //                    cows: pattern.herdSize,
+            //                    status: 'stale',
+            //                    litres: pattern.herdSize * pattern.staleAvg,
+            //                });
+            //            }                        
+            //            startDate = startDate.addDays(7);
+            //        } while (startDate < dryDate);
 
-                    pattern.herdSize += carryOvers;
-                    pattern.fertileCows = pattern.herdSize * (pattern.fertilityRate / 100);                    
-                    carryOvers = pattern.herdSize - pattern.fertileCows;
+            //        pattern.herdSize += carryOvers;
+            //        pattern.fertileCows = pattern.herdSize * (pattern.fertilityRate / 100);                    
+            //        carryOvers = pattern.herdSize - pattern.fertileCows;
 
-                    //var patternObj = this.formDryCowsWeekly(pattern);
-                    var weeksData = this.formDryCowWeeks(pattern);
-                    for (var ii = 0; ii < weeksData.length; ii++) {
-                        weekData.push(weeksData[ii]);
-                    }
+            //        //var patternObj = this.formDryCowsWeekly(pattern);
+            //        var weeksData = this.formDryCowWeeks(pattern);
+            //        for (var ii = 0; ii < weeksData.length; ii++) {
+            //            weekData.push(weeksData[ii]);
+            //        }
 
-                    //week data = { dateOn, patternName, miniHerdNumber, cows, status, litres }
+            //        //week data = { dateOn, patternName, miniHerdNumber, cows, status, litres }
 
-                    //add stale cow herd week data
-                    var currentDate = dryDate;
-                    do {
-                        weekData.push({
-                            dateOn: currentDate,
-                            patternName: pattern.patternName,
-                            miniHerdNumber: 0,
-                            cows: carryOvers,
-                            status: 'stale',
-                            litres: carryOvers * pattern.staleAvg,
-                        });
+            //        //add stale cow herd week data
+            //        var currentDate = dryDate;
+            //        do {
+            //            weekData.push({
+            //                dateOn: currentDate,
+            //                patternName: pattern.patternName,
+            //                miniHerdNumber: 0,
+            //                cows: carryOvers,
+            //                status: 'stale',
+            //                litres: carryOvers * pattern.staleAvg,
+            //            });
 
-                        currentDate = currentDate.addDays(7);
-                    } while (currentDate < nextCalvingPatternDate);                    
-                }                
+            //            currentDate = currentDate.addDays(7);
+            //        } while (currentDate < nextCalvingPatternDate);                    
+            //    }                
 
-                return weekData;
+            //    return weekData;
 
-                //this.herdsData = {
-                //    herdName: herd.herdName,
-                //    patternData: patternData,
-                //};
+            //    //this.herdsData = {
+            //    //    herdName: herd.herdName,
+            //    //    patternData: patternData,
+            //    //};
 
-                //return this.herdsData;
-            }, 
+            //    //return this.herdsData;
+            //}, 
             createYearlyHerdData(herd) {                
                 var patternData = [];                
                 var carryOvers = 0;                
@@ -761,39 +763,77 @@
 
                 //return this.herdsData;
             }, 
-            isSameYearlyWeekAs(oWeekDate, d1, d2) {
-                //return moment(d1).isSame(d2, 'day') || d1 >= d2 && d1 < (d2.addDays(7));                                
-                //return d1.getDate() == d2.getDate() && d1.getMonth() == d2.getMonth();
-                do {
-                    if (d1 < oWeekDate) {
-                        d1 = d1.addDays(364);
-                    }                    
-                } while (d1 < oWeekDate);
+            isSameYearlyWeekAs(oWeekDate, d1, d2) {                
+                if (d1 == d2) {
+                    return true;
+                }
 
-                do {
-                    if (d2 < oWeekDate) {
-                        d2 = d2.addDays(364);
-                    }                    
-                } while (d2 < oWeekDate);
+                var d1Dif = this.inDays(oWeekDate, d1);
+                var d2Dif = this.inDays(oWeekDate, d2);
 
-                var weekDif1 = this.inWeeks(oWeekDate, d1);
-                var weekDif2 = this.inWeeks(oWeekDate, d2);
+                if (d1Dif > d2Dif) {
+                    do {
+                        d1Dif -= 364;
+                    } while (d1Dif > d2Dif);
+                }
+                if (d2Dif > d1Dif) {
+                    do {
+                        d2Dif -= 364;
+                    } while (d2Dif > d1Dif);
+                }
+
+                var t = d1Dif == d2Dif;
+
+                if (t == true) {
+                    //console.log(moment(d1).format('DD MMM YYYY') + ' matches ' + moment(d2).format('DD MMM YYYY'));
+                }
+
+                if (moment(d1).format('DD MMM YYYY') == '22 Mar 2021') {
+                    //console.log('D1 hmm ' + moment(d2).format('DD MMM YYYY'));
+                    if (d1Dif == -449) {
+                        console.log(moment(d1).format('DD MMM YYYY') + ' matches ' + moment(d2).format('DD MMM YYYY'));
+                    }
+                    console.log('D1| dif1: ' + d1Dif + ' | dif2: ' + d2Dif);
+                }
+                if (moment(d2).format('DD MMM YYYY') == '23 Mar 2020') {
+                    if (d1Dif == -449) {
+                        console.log(moment(d1).format('DD MMM YYYY') + ' matches ' + moment(d2).format('DD MMM YYYY'));
+                    }
+                    //console.log('D2 hmm ' + moment(d1).format('DD MMM YYYY'));
+                    console.log('D2| dif1: ' + d1Dif + ' | dif2: ' + d2Dif);
+                }
+
+                return t;
+                //if (d1 < oWeekDate) {
+                //    do {
+                //        d1 = d1.addDays(364);
+                //    } while (d1 < oWeekDate);
+                //}
+
+                //if (d2 < oWeekDate) {
+                //    do {                        
+                //        d2 = d2.addDays(364);                        
+                //    } while (d2 < oWeekDate);
+                //}
                 
-                do {
-                    if (weekDif1 > 52) {
-                        d1 = d1.addDays(-364);
-                        weekDif1 = this.inWeeks(oWeekDate, d1);
-                    }                    
-                } while (weekDif1 > 52);
+                //var weekDif1 = this.inWeeks(oWeekDate, d1);
+                //var weekDif2 = this.inWeeks(oWeekDate, d2);
 
-                do {
-                    if (weekDif2 > 52) {
-                        d2 = d2.addDays(-364);
-                        weekDif2 = this.inWeeks(oWeekDate, d2);
-                    }                    
-                } while (weekDif2 > 52);              
+                //if (weekDif1 > 52) {
+                //    do {                        
+                //        d1 = d1.addDays(-364);
+                //        weekDif1 = this.inWeeks(oWeekDate, d1);                        
+                //    } while (weekDif1 > 52);
+                //}
 
-                return weekDif1 == weekDif2;
+                //if (weekDif2 > 52) {
+                //    do {                        
+                //        d2 = d2.addDays(-364);
+                //        weekDif2 = this.inWeeks(oWeekDate, d2);                        
+                //    } while (weekDif2 > 52);              
+                //}                
+
+                //return weekDif1 == weekDif2;
             },
             isSameWeekAs(d1, d2) {
                 //return moment(d1).isSame(d2, 'day') || d1 >= d2 && d1 < (d2.addDays(7));                                
@@ -806,6 +846,7 @@
                 var secondHalf = this.getSecondDryHalfRate(pattern);                
                 var weekNumber = 0;
                 var calvingWeeks = this.inWeeks(pattern.dateFrom, pattern.dateTo);
+                console.log('weeks of calving: ' + calvingWeeks);
                 //var cows = [];                                
                 var weekVolumes = [];
 
@@ -844,7 +885,7 @@
                         //    weekVolume.litres = weekVolume.cows * pattern.staleAvg;
                         //}
                         //else
-                        if (currentDate <= calveDate) {
+                        if (currentDate < calveDate) {
                             //already done
                             weekVolume.status = 'dry';
                         }
@@ -890,7 +931,7 @@
 
                     weekNumber += 1;
 
-                } while (weekNumber <= calvingWeeks);
+                } while (weekNumber < calvingWeeks);
                 
                 return weekVolumes;
 
@@ -903,98 +944,98 @@
              
                 //return obj;
             }, 
-            formDryCowWeeks(pattern) {
-                var sDate = this.getDryOffCommenceDate(pattern);                
-                var firstHalf = this.getFirstDryHalfRate(pattern);
-                var secondHalf = this.getSecondDryHalfRate(pattern);                
-                var weekNumber = 0;
-                var calvingWeeks = this.inWeeks(pattern.dateFrom, pattern.dateTo);
-                //var cows = [];                                
-                var weekVolumes = [];
+            //formDryCowWeeks(pattern) {
+            //    var sDate = this.getDryOffCommenceDate(pattern);                
+            //    var firstHalf = this.getFirstDryHalfRate(pattern);
+            //    var secondHalf = this.getSecondDryHalfRate(pattern);                
+            //    var weekNumber = 0;
+            //    var calvingWeeks = this.inWeeks(pattern.dateFrom, pattern.dateTo);
+            //    //var cows = [];                                
+            //    var weekVolumes = [];
 
-                if (calvingWeeks == 0 && pattern.dateFrom == pattern.dateTo) {
-                    calvingWeeks = 1;
-                }                
+            //    if (calvingWeeks == 0 && pattern.dateFrom == pattern.dateTo) {
+            //        calvingWeeks = 1;
+            //    }                
 
-                do {
-                    var dryDate = sDate.addDays(7 * weekNumber);
-                    var calveDate = dryDate.addDays(7 * pattern.weeksDry);
-                    var peakDate = calveDate.addDays(7 * pattern.weeksToPeak);
-                    var peakEndDate = peakDate.addDays(7 * pattern.weeksOfPeak);
-                    var staleDate = peakEndDate.addDays(7 * pattern.weeksTillStale);
-                    var cowCount = weekNumber < pattern.halfPercentDryWeek ? firstHalf : secondHalf;
+            //    do {
+            //        var dryDate = sDate.addDays(7 * weekNumber);
+            //        var calveDate = dryDate.addDays(7 * pattern.weeksDry);
+            //        var peakDate = calveDate.addDays(7 * pattern.weeksToPeak);
+            //        var peakEndDate = peakDate.addDays(7 * pattern.weeksOfPeak);
+            //        var staleDate = peakEndDate.addDays(7 * pattern.weeksTillStale);
+            //        var cowCount = weekNumber < pattern.halfPercentDryWeek ? firstHalf : secondHalf;
                   
-                    //organize production
-                    //var currentDate = dryDate;
-                    var currentDate = sDate;
-                    do {
-                        //register production
-                        var weekVolume = {
-                            patternName: pattern.patternName,
-                            miniHerdNumber: weekNumber,
-                            dateOn: currentDate,
-                            cows: cowCount,
-                            status: null,
-                            litres: 0
-                        };
+            //        //organize production
+            //        //var currentDate = dryDate;
+            //        var currentDate = sDate;
+            //        do {
+            //            //register production
+            //            var weekVolume = {
+            //                patternName: pattern.patternName,
+            //                miniHerdNumber: weekNumber,
+            //                dateOn: currentDate,
+            //                cows: cowCount,
+            //                status: null,
+            //                litres: 0
+            //            };
                       
-                            if (currentDate < dryDate) {
-                                weekVolume.status = 'stale';
-                                weekVolume.litres = weekVolume.cows * pattern.staleAvg;
-                            }
-                            else if (currentDate <= calveDate) {
-                                //already done
-                                weekVolume.status = 'dry';
-                            }
-                            else if (currentDate <= peakDate) {
-                                var peakWeek = this.inWeeks(currentDate, peakDate);
-                                var avgDif = pattern.peakAvg - pattern.freshAvg;
-                                var avg = pattern.freshAvg;
-                                weekVolume.status = 'fresh';
+            //                if (currentDate < dryDate) {
+            //                    weekVolume.status = 'stale';
+            //                    weekVolume.litres = weekVolume.cows * pattern.staleAvg;
+            //                }
+            //                else if (currentDate <= calveDate) {
+            //                    //already done
+            //                    weekVolume.status = 'dry';
+            //                }
+            //                else if (currentDate <= peakDate) {
+            //                    var peakWeek = this.inWeeks(currentDate, peakDate);
+            //                    var avgDif = pattern.peakAvg - pattern.freshAvg;
+            //                    var avg = pattern.freshAvg;
+            //                    weekVolume.status = 'fresh';
 
-                                if (peakWeek >= 0) {
-                                    avg = pattern.freshAvg + ((pattern.weeksToPeak - peakWeek) * (avgDif / pattern.weeksToPeak));
-                                }
+            //                    if (peakWeek >= 0) {
+            //                        avg = pattern.freshAvg + ((pattern.weeksToPeak - peakWeek) * (avgDif / pattern.weeksToPeak));
+            //                    }
 
-                                weekVolume.litres = weekVolume.cows * avg;
-                            }
-                            else if (currentDate <= peakEndDate) {
-                                weekVolume.status = 'fresh';
-                                weekVolume.litres = weekVolume.cows * pattern.peakAvg;
-                            }
-                            else if (currentDate <= staleDate) {
-                                var staleWeek = this.inWeeks(currentDate, staleDate);
-                                var avgDif = pattern.peakAvg - pattern.staleAvg;
-                                var avg = pattern.staleAvg;
-                                weekVolume.status = 'fresh';
-                                if (staleWeek >= 0) {
-                                    avg = pattern.peakAvg - ((pattern.weeksTillStale - staleWeek) * (avgDif / pattern.weeksTillStale));
-                                }
+            //                    weekVolume.litres = weekVolume.cows * avg;
+            //                }
+            //                else if (currentDate <= peakEndDate) {
+            //                    weekVolume.status = 'fresh';
+            //                    weekVolume.litres = weekVolume.cows * pattern.peakAvg;
+            //                }
+            //                else if (currentDate <= staleDate) {
+            //                    var staleWeek = this.inWeeks(currentDate, staleDate);
+            //                    var avgDif = pattern.peakAvg - pattern.staleAvg;
+            //                    var avg = pattern.staleAvg;
+            //                    weekVolume.status = 'fresh';
+            //                    if (staleWeek >= 0) {
+            //                        avg = pattern.peakAvg - ((pattern.weeksTillStale - staleWeek) * (avgDif / pattern.weeksTillStale));
+            //                    }
 
-                                weekVolume.litres = weekVolume.cows * avg;
-                            }
+            //                    weekVolume.litres = weekVolume.cows * avg;
+            //                }
 
-                        weekVolumes.push(weekVolume);
+            //            weekVolumes.push(weekVolume);
                       
-                        currentDate = currentDate.addDays(7);
+            //            currentDate = currentDate.addDays(7);
 
-                    } while (currentDate <= staleDate);
+            //        } while (currentDate <= staleDate);
 
-                    weekNumber += 1;
+            //        weekNumber += 1;
 
-                } while (weekNumber < calvingWeeks);
+            //    } while (weekNumber < calvingWeeks);
 
-                return weekVolumes;
+            //    return weekVolumes;
 
-                //var obj = {
-                //    patternName: pattern.patternName,
-                //    weekVolumes: weekVolumes,
-                //    //carryOvers: pattern.herdSize <= 0 ? 0 : pattern.herdSize - (pattern.herdSize * (pattern.fertilityRate / 100)),
-                //    //cowWeeks: cows
-                //};
+            //    //var obj = {
+            //    //    patternName: pattern.patternName,
+            //    //    weekVolumes: weekVolumes,
+            //    //    //carryOvers: pattern.herdSize <= 0 ? 0 : pattern.herdSize - (pattern.herdSize * (pattern.fertilityRate / 100)),
+            //    //    //cowWeeks: cows
+            //    //};
              
-                //return obj;
-            },         
+            //    //return obj;
+            //},         
             getStaleOnDate(pattern) {
                 return pattern.dateTo.addDays(7 * (pattern.weeksToPeak + pattern.weeksOfPeak + pattern.weeksTillStale));
             },
