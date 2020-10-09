@@ -94,7 +94,7 @@
             </div>
 
             <div class="form-group row" title="How many weeks after peak ends does the cow reach stale?">
-                <label class="col-sm-4 col-form-label">Stale After</label>
+                <label class="col-sm-4 col-form-label">Post-Peak</label>
                 <div class="col-sm-8 input-group">
                     <input class="form-control" type="number" v-model.number="item.weeksTillStale" />
                     <div class="input-group-append">
